@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#faf9f6">
+<meta name="description" content="Ontora — an interactive explorer connecting science, philosophy, and reality.">
+<title>Ontora — Explore Everything</title>
+<script src="https://unpkg.com/cytoscape@3.33.1/dist/cytoscape.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{color-scheme:dark;--bg:#101310;--panel:#191e19;--line:#303930;--text:#f0f3ec;--muted:#a0aa9e;--lime:#c9f27b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px 'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}a{color:var(--lime)}[hidden]{display:none!important}
+.wrap{width:min(1100px,100% - 40px);margin:auto}.top{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242b24}.brand{font:700 24px 'Space Grotesk';letter-spacing:-1.2px}.brand span{color:var(--lime)}.tag{font-size:12px;color:var(--muted)}
+.hero{padding:76px 0 42px}.eyebrow{color:var(--lime);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase}.hero h1{font:600 clamp(43px,8vw,78px)/1.03 'Space Grotesk';letter-spacing:-4px;margin:17px 0}.hero h1 span{color:var(--lime)}.hero p{color:var(--muted);line-height:1.8;max-width:520px}
+.search{display:flex;gap:9px;max-width:650px;margin:28px 0}.search input{flex:1;min-width:0;background:#171c17;border:1px solid #374036;border-radius:12px;padding:15px;color:var(--text)}.search button,.primary{background:var(--lime);color:#151a12;border:0;border-radius:11px;padding:0 20px;font-weight:700}.section-label{font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin:28px 0 13px}.topics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding-bottom:60px}.topic{min-height:125px;text-align:left;padding:18px;background:var(--panel);border:1px solid var(--line);border-radius:15px;color:var(--text);transition:.2s}.topic:hover{border-color:#71865a;transform:translateY(-3px)}.topic .symbol{color:var(--lime);font-size:21px}.topic strong{display:block;font-size:15px;margin:13px 0 3px}.topic small{color:var(--muted)}
+.page-head{padding:24px 0 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.back{border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);padding:9px 12px}.page-head h2{font:600 26px 'Space Grotesk';margin:0;flex:1;overflow-wrap:anywhere}.status{color:var(--muted);font-size:12px;margin:0 0 13px}.graphbox{height:min(58vh,530px);min-height:320px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background-color:#121712;background-image:radial-gradient(#303930 .8px,transparent .8px);background-size:22px 22px}#cy{width:100%;height:100%}.hint{color:var(--muted);font-size:12px;padding:12px 0 28px}.article{max-width:760px;margin:35px auto 70px;padding:clamp(20px,5vw,42px);border:1px solid var(--line);border-radius:18px;background:var(--panel)}.article h2{font:600 clamp(29px,5vw,44px)/1.12 'Space Grotesk';letter-spacing:-1.5px}.article p{color:#c0c8bc;line-height:1.9;white-space:pre-line}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.actions button,.actions a{padding:11px 14px;border-radius:10px;border:1px solid var(--line);background:#222a21;color:var(--text);text-decoration:none}.footer{border-top:1px solid #242b24;padding:22px 0 30px;color:var(--muted);font-size:12px}
+@media(max-width:650px){.topics{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding-top:53px}.hero h1{letter-spacing:-2.5px}.search{flex-direction:column}.search button{padding:14px}.tag{max-width:120px;text-align:right}.wrap{width:calc(100% - 32px)}}
+</style>
+
+<style id="ontora-light-theme">
+:root {
+ color-scheme: light;
+ --bg:#faf9f6; --panel:#ffffff; --line:#e5e3dc;
+ --text:#20211e; --muted:#74756e; --lime:#b8c99a;
+}
+body {background:#faf9f6!important;color:#20211e!important}
+.top,.footer {border-color:#e5e3dc!important}
+.search input,.topic,.back,.article {
+ background:#fff!important;color:#20211e!important;
+ border-color:#e5e3dc!important;
+}
+.search input {color:#20211e!important}
+.search input::placeholder {color:#898a83}
+.hero p,.topic small,.tag,.section-label,.status,.hint,.footer {
+ color:#74756e!important
+}
+.graphbox {
+ background-color:#f3f2ed!important;
+ background-image:radial-gradient(#d8d7cf .8px,transparent .8px)!important;
+ border-color:#e5e3dc!important
+}
+.article p {color:#34352f!important;line-height:1.95}
+.actions button,.actions a {
+ background:#f2f1ec!important;color:#20211e!important;
+ border-color:#deddd5!important
+}
+.primary,.search button {background:#dce8c9!important;color:#20211e!important}
+.topic:hover {border-color:#aab99a!important}
+</style>
+\n</head>
+<body>
+<header class="wrap top"><div class="brand"><span>◉</span> ontora</div><div class="tag">A map of ideas · Made for curiosity</div></header>
+<main class="wrap">
+<section id="home">
+<div class="hero"><div class="eyebrow">Your curiosity, connected</div><h1>Explore the<br><span>unknown.</span></h1><p>Every question leads somewhere. Explore the connections between science, philosophy, and the nature of reality.</p>
+<form class="search" id="searchForm"><input id="searchInput" placeholder="Search consciousness, time, black holes…" autocomplete="off" aria-label="Search a topic"><button>Explore ↗</button></form></div>
+<div class="section-label">Choose a starting point</div>
+<div class="topics">
+<button class="topic" data-topic="Consciousness"><span class="symbol">◉</span><strong>Consciousness</strong><small>Mind & perception</small></button>
+<button class="topic" data-topic="Time"><span class="symbol">◷</span><strong>Time</strong><small>Physics & reality</small></button>
+<button class="topic" data-topic="Black holes"><span class="symbol">◌</span><strong>Black holes</strong><small>Space & gravity</small></button>
+<button class="topic" data-topic="Existence"><span class="symbol">∞</span><strong>Existence</strong><small>Philosophy & science</small></button>
+<button class="topic" data-topic="Evolution"><span class="symbol">⌘</span><strong>Evolution</strong><small>Life & change</small></button>
+<button class="topic" data-topic="Artificial intelligence"><span class="symbol">⌬</span><strong>Artificial intelligence</strong><small>Mind & machines</small></button>
+<button class="topic" data-topic="Quantum mechanics"><span class="symbol">⟡</span><strong>Quantum mechanics</strong><small>The microscopic world</small></button>
+<button class="topic" data-topic="Fermi paradox"><span class="symbol">✳</span><strong>Fermi paradox</strong><small>Are we alone?</small></button>
+</div>
+</section>
+<section id="explorer" hidden><div class="page-head"><button class="back" id="backHome">← Home</button><h2 id="graphTitle">Knowledge map</h2><button class="back" id="resetGraph">Reset</button></div><p class="status" id="graphStatus">Preparing connections…</p>
+<p id="rootSummary" class="hint" hidden></p><div class="graphbox"><div id="cy"></div></div><p class="hint">Select a node to read its summary · Select a branch to explore further · Drag to move</p></section>
+<section id="reader" hidden><div class="page-head"><button class="back" id="backGraph">← Knowledge map</button></div><article class="article"><div class="eyebrow">Explore an idea</div><h2 id="articleTitle"></h2><p id="articleSummary">Loading article…</p><div class="actions"><a id="articleLink" href="#" target="_blank" rel="noopener">Read full article ↗</a><button id="exploreRelated" class="primary">Explore connections ↗</button></div></article></section>
+</main>
+<footer class="wrap footer">ONTORA · Keep asking why.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const home=$('home'),explorer=$('explorer'),reader=$('reader'),input=$('searchInput');
+let cy=null,currentTopic='',lastSection='explorer',request=0,rootArticle=null;
+const curated={
+'consciousness':['Neuroscience','Philosophy of mind','Perception','Artificial intelligence','Evolution'],
+'time':['Time in physics','Spacetime','Arrow of time','Relativity','Quantum mechanics'],
+'black holes':['General relativity','Event horizon','Hawking radiation','Gravitational wave','Galaxy formation'],
+'existence':['Metaphysics','Cosmology','Existence','Nothing','Philosophy'],
+'evolution':['Natural selection','Genetics','Common descent','Paleontology','Origin of life'],
+'artificial intelligence':['Machine learning','Neural network','Consciousness','Computer science','Ethics of artificial intelligence'],
+'quantum mechanics':['Quantum entanglement','Wave function','Uncertainty principle','Quantum field theory','Measurement problem'],
+'fermi paradox':['Extraterrestrial life','Drake equation','Search for extraterrestrial intelligence','Great Filter','Exoplanet']
+};
+function show(s){home.hidden=explorer.hidden=reader.hidden=true;s.hidden=false}
+async function wikiSearch(q){
+const u='https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent(q)+'&gsrnamespace=0&gsrlimit=50&prop=extracts|info&exintro=1&explaintext=1&inprop=url&format=json&origin=*';
+const d=await (await fetch(u)).json(),pages=Object.values(d.query?.pages||{}).sort((a,b)=>a.index-b.index);
+return pages.map(p=>({title:p.title,summary:p.extract||'No summary available.',url:p.fullurl||'https://en.wikipedia.org/wiki/'+encodeURIComponent(p.title.replace(/ /g,'_'))}));
+}
+async function wikiLinks(title) {
+  const u = 'https://en.wikipedia.org/w/api.php?action=query&titles='
+    + encodeURIComponent(title)
+    + '&prop=links&plnamespace=0&pllimit=max&format=json&origin=*';
+  const d = await (await fetch(u)).json();
+  return new Set(Object.values(d.query?.pages || {}).flatMap(p =>
+    (p.links || []).map(link => link.title.toLowerCase())
+  ));
+}
+
+async function wikiArticle(title){
+const u='https://en.wikipedia.org/w/api.php?action=query&titles='+encodeURIComponent(title)+'&prop=extracts|info&exintro=1&explaintext=1&inprop=url&format=json&origin=*';
+const d=await(await fetch(u)).json(),p=Object.values(d.query?.pages||{})[0];
+if(!p||p.missing!==undefined)throw Error('Article not found');
+return{title:p.title,summary:p.extract||'No summary available.',url:p.fullurl||'https://en.wikipedia.org/wiki/'+encodeURIComponent(title.replace(/ /g,'_'))};
+}
+function initGraph(){
+if(cy)return;
+cy=cytoscape({container:$('cy'),elements:[],minZoom:.3,maxZoom:2.5,style:[
+{selector:'node',style:{label:'data(label)','text-wrap':'wrap','text-max-width':130,'font-size':12,'font-family':'DM Sans, sans-serif','font-weight':500,color:'#e8eee3','text-valign':'center','text-halign':'center','background-color':'#202a21','border-width':1,'border-color':'#52664a',width:125,height:62,shape:'round-rectangle','padding':'8px'}},
+{selector:'node[kind="root"]',style:{'background-color':'#c9f27b','border-color':'#c9f27b',color:'#151a12','font-size':14,'font-weight':700,width:165,height:78}},
+{selector:'edge',style:{width:1.3,'line-color':'#52664a','target-arrow-shape':'triangle','target-arrow-color':'#52664a','curve-style':'taxi','taxi-direction':'downward','taxi-turn':'50%','taxi-turn-min-distance':18,label:'data(label)','font-size':9,color:'#aebaa6','text-background-color':'#151a15','text-background-opacity':1,'text-background-padding':3}},
+{selector:'node:selected',style:{'border-color':'#c9f27b','border-width':3}}
+],layout:{name:'breadthfirst',directed:true,spacingFactor:1.25,padding:45},userZoomingEnabled:true,userPanningEnabled:true,boxSelectionEnabled:false});
+cy.on('tap','node',e=>{const d=e.target.data();openArticle(d)});
+}
+function relations(topic,articles){
+const names=curated[topic.toLowerCase()]||articles.filter(a=>a.title.toLowerCase()!==topic.toLowerCase()).map(a=>a.title).slice(0,50);
+return names.map((name,i)=>({name,relation:['connects to','explores','relates to','helps explain','raises questions about'][i%5],article:articles.find(a=>a.title.toLowerCase()===name.toLowerCase())}));
+}
+async function drawGraph(topic){
+initGraph();
+const id=++request;
+$('graphTitle').textContent=topic;
+$('graphStatus').textContent='Discovering connected ideas…';
+show(explorer);
+try{
+const root=await wikiArticle(topic).catch(async()=>{const a=await wikiSearch(topic);if(!a.length)throw Error('No results');return a[0]});
+const articles=await Promise.all((curated[topic.toLowerCase()]||[]).map(t=>wikiArticle(t).catch(()=>wikiSearch(t).then(a=>a[0]||{title:t,summary:'',url:''}))));
+if(id!==request)return;
+rootArticle=root;
+$("rootSummary").textContent = root.summary || "No short summary available for this topic.";
+$("rootSummary").hidden = false;
+const discovered = await wikiSearch(topic);
+const linkedTitles = await wikiLinks(root.title);
+
+// Deduplicate candidates without rejecting missing summaries.
+const seen = new Set();
+const pool = [...articles, ...discovered].filter(a => {
+  if (!a || !a.title) return false;
+  const key = a.title.trim().toLowerCase();
+  if (!key || key === root.title.trim().toLowerCase() || seen.has(key))
+    return false;
+  seen.add(key);
+  return true;
+});
+
+// Rank by topic-word overlap and summary availability, with variety.
+const terms = topic.toLowerCase().split(/\\W+/).filter(w => w.length > 2);
+const ranked = pool.map(a => {
+  const title = a.title.toLowerCase();
+  const summary = (a.summary || '').toLowerCase();
+  const overlap = terms.reduce((n, w) =>
+    n + (title.includes(w) ? 3 : 0) + (summary.includes(w) ? 1 : 0), 0);
+  const summaryBonus = a.summary && a.summary.trim() ? 0.5 : 0;
+  const linkBonus = linkedTitles.has(title) ? 8 : 0;
+  return { article: a, score: overlap + summaryBonus + linkBonus + Math.random() * 2 };
+});
+ranked.sort((a, b) => b.score - a.score);
+const children = ranked.slice(0, 50).map(x => x.article);
+const nodes=[{data:{id:'root',label:root.title,title:root.title,summary:root.summary,url:root.url,kind:'root'}}];
+const edges=[];
+children.forEach((a,i)=>{if(!a)return;const nodeId='n'+i;nodes.push({data:{id:nodeId,label:a.title,title:a.title,summary:a.summary||'',url:a.url||'',kind:'article'}});edges.push({data:{id:'e'+i,source:'root',target:nodeId}})});
+cy.elements().remove();cy.add([...nodes,...edges]);
+cy.layout({name:'cose',animate:true,animationDuration:500,nodeRepulsion:9000,idealEdgeLength:130,edgeElasticity:100,gravity:0.25,numIter:700,padding:60}).run();
+setTimeout(()=>{if(cy){cy.resize();cy.fit(cy.elements(),40)}},480);
+$('graphStatus').textContent=`${children.length} connected ideas · Select any node to read`;
+}catch(e){if(id===request)$('graphStatus').textContent='Could not load topics. Check your connection and try again.'}
+}
+async function openArticle(data){
+lastSection=explorer;show(reader);$('articleTitle').textContent=data.title||currentTopic;$('articleSummary').textContent=data.summary||'Loading summary…';$('articleLink').href=data.url||'#';
+$('exploreRelated').onclick=()=>drawGraph(data.title||currentTopic);
+if(data.summary)return;
+try{const a=await wikiArticle(data.title);$('articleTitle').textContent=a.title;$('articleSummary').textContent=a.summary;$('articleLink').href=a.url}
+catch{$('articleSummary').textContent='Summary unavailable. Try the original article link.'}
+}
+async function search(q){q=q.trim();if(!q)return;currentTopic=q;await drawGraph(q)}
+$('searchForm').addEventListener('submit',e=>{e.preventDefault();search(input.value)});
+document.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.topic;search(b.dataset.topic)}));
+$('backHome').onclick=()=>{++request;show(home)};
+$('backGraph').onclick=()=>{show(explorer);setTimeout(()=>{cy?.resize();cy?.fit(cy.elements(),40)},60)};
+$('resetGraph').onclick=()=>drawGraph(currentTopic);
+window.addEventListener('resize',()=>{if(cy&&!explorer.hidden){cy.resize();cy.fit(cy.elements(),40)}});
+</script>
+</body>
+</html>
