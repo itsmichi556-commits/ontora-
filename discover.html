@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8fc">
+<title>Discover — Ontora</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,sans-serif;color:#202436;background:#f7f8fc}
+*{box-sizing:border-box}
+body{margin:0}
+header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8eaf2}
+.logo{font-size:23px;font-weight:800;letter-spacing:-1px}
+a{color:inherit;text-decoration:none}
+nav a{margin-left:20px;color:#676b7d;font-size:14px}
+main{max-width:850px;margin:55px auto;padding:0 22px}
+.eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#7773d9;font-weight:750}
+h1{font-size:clamp(35px,7vw,58px);letter-spacing:-2px;line-height:1.08;margin:15px 0}
+.intro{color:#707487;line-height:1.7;font-size:16px}
+.card{margin-top:32px;padding:clamp(23px,5vw,42px);background:#fff;border:1px solid #e9eaf2;border-radius:24px;box-shadow:0 12px 40px #25264a0a}
+.tag{display:inline-block;background:#f0efff;color:#655bc4;border-radius:30px;padding:7px 12px;font-size:12px;font-weight:700}
+h2{font-size:clamp(27px,5vw,38px);line-height:1.2;letter-spacing:-1px;margin:20px 0 14px}
+.summary{font-size:17px;line-height:1.85;color:#555b6e}
+.question{margin-top:24px;padding:18px;background:#f7f7fc;border-radius:14px;line-height:1.65}
+.buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:25px}
+button{border:0;border-radius:12px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer}
+.primary{background:#655bc4;color:white}
+.secondary{background:#f0eff8;color:#514b9b}
+#details{display:none;margin-top:25px;border-top:1px solid #ececf3;padding-top:20px;line-height:1.85;color:#555b6e}
+#details h3{color:#25283a}
+.source{font-size:13px;color:#7773a8;overflow-wrap:anywhere}
+footer{text-align:center;padding:35px 20px;color:#85899a;font-size:13px}
+@media(max-width:500px){header{padding:18px 5%}nav a{margin-left:10px;font-size:12px}main{margin-top:38px}}
+</style>
+</head>
+<body>
+<header>
+<a class="logo" href="index.html">ontora<span style="color:#766de0">.</span></a>
+<nav><a href="index.html">Home</a><a href="explore.html">Explore</a></nav>
+</header>
+<main>
+<div class="eyebrow">A little curiosity goes a long way</div>
+<h1>You don't need a question to discover something.</h1>
+<p class="intro">Shuffle through science, philosophy, technology, and the strange corners of reality. Find something worth thinking about.</p>
+
+<section class="card" aria-live="polite">
+<span class="tag" id="category"></span>
+<h2 id="title"></h2>
+<div class="summary" id="summary"></div>
+<div class="question"><strong>Think about this</strong><br><span id="question"></span></div>
+<div class="buttons">
+<button class="primary" id="read">Explore the idea ↗</button>
+<button class="secondary" id="shuffle">🎲 Shuffle topic</button>
+</div>
+<div id="details">
+<h3>The deeper idea</h3>
+<div id="deep"></div>
+<h3>Questions to explore</h3>
+<div id="debate"></div>
+<h3>Read more</h3>
+<div class="source" id="source"></div>
+<div class="buttons"><button class="secondary" id="discuss">Discuss with AI ↗</button></div>
+</div>
+</section>
+<p class="intro" style="text-align:center;margin-top:25px">No account needed. No learning path imposed. Just follow your curiosity.</p>
+</main>
+<footer>Ontora · Explore beyond what you know.</footer>
+<script>
+const topics=[
+{category:"Cosmology",title:"Does the universe have an edge?",summary:"We can observe only a limited region of the universe because light has had a finite time to reach us. But the edge of what we can observe is not necessarily the edge of everything.",question:"If the universe has no edge, how could something infinite exist?",deep:"The observable universe has a horizon: beyond it, light has not had enough time to reach us. The entire universe may be much larger than the observable part, and it could be spatially infinite or finite without having an edge. Current observations do not settle its overall size or topology.",debate:"What observations could help distinguish between an infinite universe and a finite one? Does an observational limit imply a physical boundary?",source:"NASA: https://science.nasa.gov/universe/",search:"universe shape finite infinite NASA"},
+{category:"Physics",title:"Where does the mass of matter come from?",summary:"Much of the mass of ordinary matter comes from the energy of interactions inside protons and neutrons—not simply from the Higgs field giving every particle its mass.",question:"How can energy contribute to the mass of a proton?",deep:"The Higgs field gives elementary particles such as quarks their rest masses. But most of a proton's mass comes from the energy of the strong interaction, including the dynamics of quarks and gluons. The relationship between energy and mass is expressed by E = mc².",debate:"What does it mean for energy to contribute to the mass of a bound system? How would matter differ if the Higgs field behaved differently?",source:"CERN: https://home.cern/science/physics/origin-mass",search:"origin of mass CERN Higgs proton"},
+{category:"Biology",title:"Is a virus alive?",summary:"Viruses carry genetic information and evolve, yet they cannot reproduce independently. Whether they count as living depends partly on how life is defined.",question:"Should the ability to reproduce independently be required for something to be alive?",deep:"Viruses evolve through natural selection and possess genetic material, but they depend on host cells to make new viruses. There is no single definition of life accepted for every borderline case, so the classification depends on which properties a definition emphasizes.",debate:"Could a life-form that depends on another organism still count as alive? What properties should a scientific definition of life include?",source:"Encyclopaedia Britannica: https://www.britannica.com/science/virus",search:"are viruses alive biology"},
+{category:"Computer Science",title:"How can a computer be hacked without touching it?",summary:"A computer can be compromised through network vulnerabilities, deceptive messages, stolen credentials, or insecure software. Physical access is only one possible route.",question:"Is a system secure if its hardware is physically protected but its software is vulnerable?",deep:"Networked systems exchange data according to protocols and run software that can contain mistakes. Attackers may exploit those weaknesses remotely. Security therefore depends on software updates, authentication, careful configuration, and reducing unnecessary access—not just locking a device in a room.",debate:"Can any connected system be perfectly secure? How should engineers balance convenience, privacy, and security?",source:"CISA: https://www.cisa.gov/secure-our-world",search:"remote computer security vulnerabilities CISA"},
+{category:"Philosophy",title:"Are mathematical truths invented or discovered?",summary:"Humans invent mathematical notation and formal systems, yet mathematical relationships often seem to be discovered rather than chosen. Philosophers disagree about what explains this.",question:"If humans disappeared, would prime numbers still exist?",deep:"Mathematical Platonists argue that mathematical truths exist independently of human minds. Formalists emphasize rules and symbol systems, while other views connect mathematics to structures or patterns in the world. The question remains a major philosophical debate.",debate:"Does the usefulness of mathematics in physics support the idea that mathematical structures exist independently of us?",source:"Stanford Encyclopedia of Philosophy: https://plato.stanford.edu/entries/philosophy-mathematics/",search:"philosophy mathematics invented discovered"},
+{category:"Animal Minds",title:"What is the world like for an octopus?",summary:"Octopuses have sophisticated senses and a nervous system distributed throughout the body, with much neural processing occurring in their arms. Their experience may differ greatly from ours.",question:"How could we investigate an animal's experience without assuming it thinks like a human?",deep:"Octopuses show flexible problem-solving and complex behavior. Their nervous systems are organized differently from those of mammals, which makes them fascinating subjects for studying cognition. Behavior can provide evidence about abilities, but it cannot give us direct access to another creature's subjective experience.",debate:"What evidence should count when assessing animal intelligence or sentience? How can researchers avoid interpreting every behavior through a human lens?",source:"Smithsonian Ocean: https://ocean.si.edu/ocean-life/invertebrates/octopuses",search:"octopus intelligence nervous system Smithsonian"},
+{category:"Psychology",title:"Would perfect memory make life better?",summary:"Memory helps us learn who we are, but remembering is not a perfect recording process. Forgetting also helps the brain prioritize and update information.",question:"Would remembering every detail make you wiser—or simply overwhelm you?",deep:"Human memory is reconstructive and selective. Research suggests forgetting can help reduce interference and allow relevant information to guide behavior. The effects of unusually strong autobiographical memory are complex; remembering more does not automatically mean reasoning better.",debate:"Is forgetting a flaw, an adaptation, or both? Would perfect recall guarantee that you interpret the past correctly?",source:"APA: https://www.apa.org/topics/memory",search:"human memory forgetting psychology"},
+{category:"Earth Science",title:"What if Earth suddenly stopped rotating?",summary:"Earth's rotation affects day and night, weather patterns, and the movement of oceans. A sudden stop would be catastrophic because the surface and atmosphere already have rotational motion.",question:"Why does motion matter even when we don't feel ourselves moving?",deep:"At the equator, Earth's surface rotates eastward at roughly 1,670 kilometres per hour. If the solid Earth stopped instantly while the atmosphere and oceans retained their motion, enormous destructive forces would result. This is a hypothetical scenario, not a realistic forecast.",debate:"Why do we feel acceleration more readily than constant motion? How do reference frames help explain motion?",source:"NASA Earth Observatory: https://earthobservatory.nasa.gov/",search:"Earth rotation speed NASA"},
+{category:"Neuroscience",title:"Why is there subjective experience?",summary:"Neuroscience can study the brain processes associated with perception and awareness. Explaining why those processes feel like something from the inside remains a difficult philosophical and scientific problem.",question:"Would a complete map of brain activity explain what an experience feels like?",deep:"Researchers investigate consciousness through perception, attention, wakefulness, and neural activity. Several theories attempt to explain how conscious processing arises, but there is no universally accepted account that resolves every aspect of subjective experience.",debate:"What evidence would distinguish competing theories of consciousness? Is explaining behavior enough, or does subjective experience require a further explanation?",source:"Stanford Encyclopedia of Philosophy: https://plato.stanford.edu/entries/consciousness/",search:"consciousness neuroscience theories"},
+{category:"Engineering",title:"Why don't we use solar panels at night?",summary:"Solar panels need light to generate electricity, so systems using solar power at night need stored energy or another source. Batteries, pumped storage, and interconnected grids can help bridge the gap.",question:"What matters more for a renewable grid: cheaper generation or better energy storage?",deep:"Solar output varies with sunlight, weather, and season. Energy storage shifts electricity from times of surplus to times of demand, while grid connections and other energy sources help balance supply. Different combinations suit different locations and costs.",debate:"How should communities balance storage, transmission, land use, reliability, and cost when designing a clean-energy system?",source:"US Department of Energy: https://www.energy.gov/eere/solar/solar-energy-technologies-office",search:"solar energy storage electricity grid"}
+];
+let current=-1,previous=-1;
+const $=id=>document.getElementById(id);
+function shuffle(){
+ if(topics.length<2)return;
+ let n;do{n=Math.floor(Math.random()*topics.length)}while(n===current);
+ previous=current;current=n;const t=topics[n];
+ $("category").textContent=t.category;$("title").textContent=t.title;
+ $("summary").textContent=t.summary;$("question").textContent=t.question;
+ $("deep").textContent=t.deep;$("debate").textContent=t.debate;
+ $("source").innerHTML='<a target="_blank" rel="noopener noreferrer" href="'+t.source+'">Open source ↗</a>';
+ $("details").style.display="none";$("read").textContent="Explore the idea ↗";
+}
+$("shuffle").addEventListener("click",shuffle);
+$("read").addEventListener("click",()=>{$("details").style.display=$("details").style.display==="block"?"none":"block";$("read").textContent=$("details").style.display==="block"?"Hide full explanation":"Explore the idea ↗";});
+$("discuss").addEventListener("click",()=>{
+ const t=topics[current];const prompt="Help me critically discuss this topic: "+t.title+"\n\nSummary: "+t.summary+"\n\nQuestion: "+t.question+"\n\nPresent evidence, distinguish established facts from uncertainty, and include strong counterarguments.";
+ location.href="https://chatgpt.com/?q="+encodeURIComponent(prompt);
+});
+shuffle();
+</script>
+</body>
+</html>
